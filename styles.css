@@ -1,0 +1,76 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(140deg, #f0fbfa 0%, #e6f4f3 50%, #fef7e6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #0b6e6b;
+}
+
+.card {
+  width: min(420px, 100%);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  border: 1px solid #d1e7e5;
+  box-shadow: 0 12px 30px rgba(11, 110, 107, 0.12);
+  display: grid;
+  gap: 14px;
+}
+
+.badge {
+  align-self: flex-start;
+  background: #e6f4f3;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  border: 1px solid #d1e7e5;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.subtitle {
+  color: #375a59;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.google-btn {
+  background: #db4437;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.google-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.status {
+  min-height: 18px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.note {
+  font-size: 12px;
+  color: #6b7280;
+}
