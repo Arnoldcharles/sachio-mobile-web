@@ -31,6 +31,7 @@ const redirectUri =
 
 const statusEl = document.getElementById('status');
 const button = document.getElementById('googleSignIn');
+const returnButton = document.getElementById('returnToApp');
 
 const setStatus = (text) => {
   statusEl.textContent = text || '';
@@ -39,9 +40,12 @@ const setStatus = (text) => {
 const finishLogin = async (user) => {
   const idToken = await user.getIdToken();
   const join = redirectUri.includes('?') ? '&' : '?';
-  window.location.href = `${redirectUri}${join}idToken=${encodeURIComponent(
-    idToken
-  )}`;
+  const target = `${redirectUri}${join}idToken=${encodeURIComponent(idToken)}`;
+  window.location.href = target;
+  returnButton.hidden = false;
+  returnButton.onclick = () => {
+    window.location.href = target;
+  };
 };
 
 const handleRedirectResult = async () => {
