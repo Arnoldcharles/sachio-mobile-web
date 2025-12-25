@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
   getRedirectResult,
+  onAuthStateChanged,
 } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js';
 
 const firebaseConfig = {
@@ -32,15 +33,20 @@ const redirectUri =
 const statusEl = document.getElementById('status');
 const button = document.getElementById('googleSignIn');
 const returnButton = document.getElementById('returnToApp');
+let redirectInProgress = false;
 
 const setStatus = (text) => {
   statusEl.textContent = text || '';
 };
 
 const finishLogin = async (user) => {
+  if (redirectInProgress) return;
+  redirectInProgress = true;
   const idToken = await user.getIdToken();
   const join = redirectUri.includes('?') ? '&' : '?';
   const target = `${redirectUri}${join}idToken=${encodeURIComponent(idToken)}`;
+  localStorage.setItem('sachio_login_ready', '1');
+  setStatus('Redirecting to the app...');
   window.location.href = target;
   returnButton.hidden = false;
   returnButton.onclick = () => {
@@ -60,6 +66,12 @@ const handleRedirectResult = async () => {
   }
 };
 
+onAuthStateChanged(auth, (user) => {
+  if (!user) return;
+  setStatus('Logged in. Tap "Return to App" if not redirected.');
+  void finishLogin(user);
+});
+
 button.addEventListener('click', async () => {
   setStatus('Opening Google...');
   button.disabled = true;
@@ -70,5 +82,10 @@ button.addEventListener('click', async () => {
     button.disabled = false;
   }
 });
+
+if (localStorage.getItem('sachio_login_ready') === '1') {
+  returnButton.hidden = false;
+  setStatus('Logged in. Tap "Return to App" if not redirected.');
+}
 
 handleRedirectResult();
