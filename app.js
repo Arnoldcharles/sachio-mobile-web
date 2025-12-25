@@ -31,6 +31,7 @@ const redirectUri =
   paramRedirect || localStorage.getItem(redirectKey) || 'sachio://auth/callback';
 
 const statusEl = document.getElementById('status');
+const debugEl = document.getElementById('debugInfo');
 const button = document.getElementById('googleSignIn');
 const returnButton = document.getElementById('returnToApp');
 let redirectInProgress = false;
@@ -38,6 +39,23 @@ let redirectInProgress = false;
 const setStatus = (text) => {
   statusEl.textContent = text || '';
 };
+
+const setDebug = (text) => {
+  debugEl.textContent = text || '';
+};
+
+setStatus('Loading login…');
+setDebug(`Redirect URI: ${redirectUri}`);
+
+window.addEventListener('error', (event) => {
+  setStatus('Script error');
+  setDebug(event?.message || 'Unknown error');
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  setStatus('Promise error');
+  setDebug(event?.reason?.message || String(event?.reason || 'Unknown error'));
+});
 
 const finishLogin = async (user) => {
   if (redirectInProgress) return;
@@ -47,8 +65,9 @@ const finishLogin = async (user) => {
   const target = `${redirectUri}${join}idToken=${encodeURIComponent(idToken)}`;
   localStorage.setItem('sachio_login_ready', '1');
   setStatus('Redirecting to the app...');
+  setDebug(`Token length: ${idToken.length}`);
+  returnButton.disabled = false;
   window.location.href = target;
-  returnButton.hidden = false;
   returnButton.onclick = () => {
     window.location.href = target;
   };
@@ -69,11 +88,13 @@ const handleRedirectResult = async () => {
 onAuthStateChanged(auth, (user) => {
   if (!user) return;
   setStatus('Logged in. Tap "Return to App" if not redirected.');
+  setDebug(`User: ${user.email || user.uid}`);
   void finishLogin(user);
 });
 
 button.addEventListener('click', async () => {
   setStatus('Opening Google...');
+  setDebug('');
   button.disabled = true;
   try {
     await signInWithRedirect(auth, provider);
@@ -84,8 +105,8 @@ button.addEventListener('click', async () => {
 });
 
 if (localStorage.getItem('sachio_login_ready') === '1') {
-  returnButton.hidden = false;
   setStatus('Logged in. Tap "Return to App" if not redirected.');
+  returnButton.disabled = false;
 }
 
 handleRedirectResult();
